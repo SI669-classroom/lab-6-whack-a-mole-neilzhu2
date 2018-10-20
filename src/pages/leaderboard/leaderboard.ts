@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Platform } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Platform, DateTime } from 'ionic-angular';
 import { DataProvider } from '../../provider/data/data';
 import { Storage } from '@ionic/storage';
 
@@ -33,7 +33,8 @@ export class LeaderboardPage {
     console.log('ionViewDidLoad LeaderboardPage');
     // Platform.ready isn't required in the new Ionic
     this.platform.ready().then(() => {
-      /*Storage get*/.then((result) => {
+
+      /*Storage get*/this.storage.get('leaderboard').then((result) => {
         let res;
         if(!result) {
           res = []
@@ -46,9 +47,9 @@ export class LeaderboardPage {
           time: Date.now()
         })
 
-        console.log(res);
+        this.scoreList = res.filter((each) => each.score)
 
-        this.scoreList = res.sort(function(a, b) {
+        this.scoreList = this.scoreList.sort(function(a, b) {
           if(a.score > b.score) {
             return -1;
           } else {
@@ -56,7 +57,9 @@ export class LeaderboardPage {
           }
         })
 
-        /*Storage set*/.('leaderboard', JSON.stringify(res));
+        
+
+        /*Storage set*/this.storage.set('leaderboard', JSON.stringify(this.scoreList));
       })
     })
   }
